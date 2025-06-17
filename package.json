@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.6.1",
     "cookie-parser": "^1.4.7",
     "cookies-parser": "^1.2.0",
     "cors": "^2.8.5",
@@ -19,7 +20,8 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.2",
-    "mongoose-aggregate-paginate-v2": "^1.1.4"
+    "mongoose-aggregate-paginate-v2": "^1.1.4",
+    "multer": "^2.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
