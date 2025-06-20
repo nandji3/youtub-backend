@@ -1,7 +1,7 @@
-const { Schema, Model } = require("mongoose");
+const mongoose = require("mongoose");
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
-const videoSchema = new Schema({
+const videoSchema = new mongoose.Schema({
     videoFile: {
         type: String, //Cloudinary URL
         required: true
@@ -32,11 +32,13 @@ const videoSchema = new Schema({
 
     },
     owner: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }
 
 }, { timestamps: true });
 
 videoSchema.plugin(mongooseAggregatePaginate);
-module.exports = Model("Video", userSchema);;
+const Video = Model("Video", videoSchema);;
+
+module.exports = { Video }

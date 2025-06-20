@@ -1,8 +1,8 @@
-const { Schema, Model } = require("mongoose")
+const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
@@ -32,7 +32,7 @@ const userSchema = new Schema({
         type: String
     },
     watchHistory: [{
-        type: Schema.Type.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Video"
     }],
     password: {
