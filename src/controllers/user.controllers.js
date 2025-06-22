@@ -98,42 +98,47 @@ const loginUser = asyncHandler(async (req, res) => {
     // access and refresh token
     // send cookie
 
-    const { username, email } = req.body;
+    const { username, email, password } = req.body;
 
-    if (!username || !email) throw new ApiError(400, "username or email is required !")
 
-    const user = User.findOne({
+    if ((!username || username.trim() === "") && (!email || email.trim() === "")) {
+        throw new ApiError(400, "Username or email is required!");
+    }
+
+    const user = await User.findOne({
         $or: [{ username }, { email }]
     })
 
     if (!user) throw new ApiError(404, "User does not exist.")
 
-    const isPasswordCorrect = await user.isPasswordCorrect(password);
+    const isMatch = await user.isPasswordCorrect(password);
 
-    if (!isPasswordCorrect) throw new ApiError(404, "Invalid user credentials.")
+    if (!isMatch) throw new ApiError(404, "Invalid user credentials.")
 
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-    const options = {
+    const cookieOptions = {
         httpOnly: true,
-        secure: true
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        // maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     } //means ye cookies only server se modifyable hai not modify from client side
 
     return res
         .status(200)
-        .cookies("accessToken", accessToken, options)
-        .cookies("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, cookieOptions)
+        .cookie("refreshToken", refreshToken, cookieOptions)
         .json(
-            ApiResponse(
+            new ApiResponse(
                 200,
                 {
                     user: loggedInUser,
                     accessToken,
                     refreshToken,
                 },
-                "User loggedIn successfully !"
+                "User logged in successfully!"
             )
         )
 
@@ -155,15 +160,16 @@ const logoutUser = asyncHandler(async (req, res, next) => {
         }
     )
 
-    const options = {
+    const cookieOptions = {
         httpOnly: true,
-        secure: true
-    }
+        secure: process.env.NODE_ENV === "production",
+        //  sameSite: "Strict",
+    } //means ye cookies only server se modifyable hai not modify from client side
 
     return res
         .status(200)
-        .clearCookies("accessToken", options)
-        .clearCookies("refreshToken", options)
+        .clearCookie("accessToken", cookieOptions)
+        .clearCookie("refreshToken", cookieOptions)
         .json(
             new ApiResponse(200, {}, "User logged Out successfully !!")
         )
