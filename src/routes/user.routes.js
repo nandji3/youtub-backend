@@ -1,7 +1,8 @@
 const express = require("express");
-const { registerUser, loginUser, logoutUser, refreshAccessToken } = require("../controllers/user.controllers");
+const { registerUser, loginUser, logoutUser, refreshAccessToken, getUserProfile, forgotPassword, resetPassword } = require("../controllers/user.controllers");
 const { upload } = require("../middlewares/multer.middleware");
 const { verifyJWT } = require("../middlewares/authentication.middleware");
+const { loginLimiter, forgotPasswordLimiter } = require("../utils/rateLimiters");
 
 
 const router = express.Router();
@@ -17,16 +18,38 @@ router.route("/register")
     .post(uploadMiddleware, registerUser)
 
 router.route("/login")
-    .post(loginUser)
+    .post(loginLimiter, loginUser)
 
-// *** Secured or Protected Routes *** ==> jane se pehle jwt verification se mil kar jana
+
 router.route("/logout")
-    .post(verifyJWT, logoutUser)
+    .post(verifyJWT, logoutUser) // *** Secured or Protected Routes *** ==> jane se pehle jwt verification se mil kar jana
+
 router.route("/refresh-token")
     .post(refreshAccessToken)
 
+router.route("/profile")
+    .get(verifyJWT, getUserProfile); // *** Secured or Protected Routes *** ==> jane se pehle jwt verification se mil kar jana
+
+router.route("/forgot-password")
+    .post(forgotPasswordLimiter, forgotPassword);
+
+router.route("/reset-password/:token")
+    .post(resetPassword);
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

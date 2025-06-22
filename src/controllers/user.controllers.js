@@ -4,6 +4,9 @@ const { ApiResponse } = require("../utils/ApiResponse")
 const { User } = require("../models/user.model")
 const { uploadOnCloudinay } = require("../utils/cloudinary")
 const jwt = require("jsonwebtoken");
+const CryptoJS = require("crypto-js");
+const { sendEmail } = require("../utils/sendEmail");
+
 const generateAccessTokenAndRefreshToken = async (userId) => {
     try {
         const user = await User.findOne(userId);
@@ -230,4 +233,109 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = { registerUser, loginUser, logoutUser, refreshAccessToken };
+const getUserProfile = asyncHandler(async (req, res) => {
+    const userId = req.user?._id;
+
+    if (!userId) {
+        throw new ApiError(400, "Invalid or missing user ID from token.");
+    }
+
+    const user = await User.findById(userId).select("-password -refreshToken");
+
+    if (!user) {
+        throw new ApiError(404, "User not found.");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "User profile fetched successfully."));
+});
+
+
+const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) throw new ApiError(400, "Email is required!");
+
+    const user = await User.findOne({ email });
+    if (!user) throw new ApiError(404, "User not found!");
+
+    const resetTokenRaw = CryptoJS.lib.WordArray.random(32).toString();
+
+    const hashedToken = CryptoJS.SHA256(resetTokenRaw).toString();
+
+    user.passwordResetToken = hashedToken;
+    user.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetTokenRaw}`;
+
+    const emailHTML = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Reset Your Password</title>
+    <style>
+      body { font-family: Arial, sans-serif; background-color: #f9fafb; margin: 0; padding: 0; }
+      .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.05); color: #111111; }
+      h2 { color: #333333; margin-bottom: 20px; }
+      p { font-size: 16px; line-height: 1.6; color: #333333; }
+      .btn { display: inline-block; background-color: #3b82f6; color: #ffffff; padding: 12px 24px; margin: 30px 0; text-decoration: none; border-radius: 6px; font-size: 16px; }
+      .footer { font-size: 13px; color: #888888; text-align: center; margin-top: 30px; border-top: 1px solid #eeeeee; padding-top: 20px; }
+      @media (max-width: 600px) {
+        .container { padding: 20px; margin: 20px; }
+        .btn { width: 100%; text-align: center; box-sizing: border-box; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>🔐 Reset Your Password</h2>
+      <p>Hi <strong>${user.fullName}</strong>,</p>
+      <p>We received a request to reset your password. Click the button below. This link will expire in 15 minutes.</p>
+      <a href="${resetUrl}" class="btn" target="_blank">Reset Password</a>
+      <p>If you didn’t request this, you can ignore this email.</p>
+      <div class="footer">Need help? Contact our support team.<br>© ${new Date().getFullYear()} YourAppName. All rights reserved.</div>
+    </div>
+  </body>
+  </html>
+  `;
+
+    await sendEmail({
+        to: user.email,
+        subject: "Reset Your Password",
+        html: emailHTML,
+    });
+
+    res.status(200).json(new ApiResponse(200, {}, "Reset link sent to email."));
+});
+
+
+const resetPassword = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!token || !password) throw new ApiError(400, "Token and new password are required.");
+
+    const hashedToken = CryptoJS.SHA256(token).toString();
+
+    const user = await User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: Date.now() },
+    });
+
+    if (!user) throw new ApiError(400, "Token is invalid or has expired.");
+
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save();
+
+    res.status(200).json(new ApiResponse(200, {}, "Password reset successful."));
+});
+
+
+
+module.exports = { registerUser, loginUser, logoutUser, refreshAccessToken, getUserProfile, forgotPassword, resetPassword };
