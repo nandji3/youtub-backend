@@ -1,6 +1,9 @@
 const express = require("express");
-const { registerUser } = require("../controllers/user.controllers");
+const { registerUser, loginUser, logoutUser } = require("../controllers/user.controllers");
 const { upload } = require("../middlewares/multer.middleware");
+const { verifyJWT } = require("../middlewares/authentication.middleware");
+const { verifyJWT } = require("../middlewares/authentication.middleware");
+
 
 const router = express.Router();
 
@@ -14,4 +17,23 @@ const uploadMiddleware = upload.fields([{ name: 'avatar', maxCount: 1 }, { name:
 router.route("/register")
     .post(uploadMiddleware, registerUser)
 
+router.route("/login")
+    .post(loginUser)
+
+// *** Secured or Protected Routes *** ==> jane se pehle jwt verification se mil kar jana
+router.route("/logout")
+    .post(verifyJWT, logoutUser)
+
 module.exports = router;
+
+
+
+
+
+// ***How to inject other middleware like authorization role***
+
+// const { ROLES } = require("../constant");
+// const { authorizeRoles } = require("../middlewares/authorizeRole.middleware");
+
+// router.route("/logout")
+//     .post(verifyJWT, authorizeRoles(ROLES.ADMIN), getAllUser);

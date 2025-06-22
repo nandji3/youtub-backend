@@ -1,5 +1,6 @@
 const multer = require("multer");
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 const uploadTempPath = path.join(__dirname, "../../public/temp");
 // OR
@@ -10,9 +11,7 @@ const storage = multer.diskStorage({
         cb(null, uploadTempPath)
     },
     filename: function (req, file, cb) {
-        // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        // cb(null, file.originalname + '-' + uniqueSuffix)
-        cb(null, file.originalname)
+        cb(null, uuidv4() + path.extname(file.originalname))
     }
 })
 
