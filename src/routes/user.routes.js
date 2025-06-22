@@ -2,7 +2,6 @@ const express = require("express");
 const { registerUser, loginUser, logoutUser } = require("../controllers/user.controllers");
 const { upload } = require("../middlewares/multer.middleware");
 const { verifyJWT } = require("../middlewares/authentication.middleware");
-const { verifyJWT } = require("../middlewares/authentication.middleware");
 
 
 const router = express.Router();
@@ -33,6 +32,7 @@ module.exports = router;
 // ***How to inject other middleware like authorization role***
 
 // const { ROLES } = require("../constant");
+// const { verifyJWT } = require("../middlewares/authentication.middleware");
 // const { authorizeRoles } = require("../middlewares/authorizeRole.middleware");
 
 // router.route("/logout")
