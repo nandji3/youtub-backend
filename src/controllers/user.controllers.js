@@ -185,10 +185,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 
     try {
-        const decodedRefreshToken = jwt.verify(incomingRefreshToken, process.env.ACCESS_TOKEN_SECRET)
+        const decodedRefreshToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
 
         const user = await User.findById(decodedRefreshToken._id);
-
         if (!user) {
             throw new ApiError(401, "Invalid refresh token: User not found.");
         }
@@ -198,6 +197,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         }
 
         const { accessToken, refreshToken: newRefreshToken } = await generateAccessTokenAndRefreshToken(user._id);
+
+        user.refreshToken = newRefreshToken;
+        await user.save({ validateBeforeSave: false });
 
         const cookieOptions = {
             httpOnly: true,
