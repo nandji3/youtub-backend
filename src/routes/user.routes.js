@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, loginUser, logoutUser } = require("../controllers/user.controllers");
+const { registerUser, loginUser, logoutUser, refreshAccessToken } = require("../controllers/user.controllers");
 const { upload } = require("../middlewares/multer.middleware");
 const { verifyJWT } = require("../middlewares/authentication.middleware");
 
@@ -22,6 +22,9 @@ router.route("/login")
 // *** Secured or Protected Routes *** ==> jane se pehle jwt verification se mil kar jana
 router.route("/logout")
     .post(verifyJWT, logoutUser)
+router.route("/refresh-token")
+    .post(refreshAccessToken)
+
 
 module.exports = router;
 

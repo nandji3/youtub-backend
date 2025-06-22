@@ -116,3 +116,24 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+# Node
+node_modules/
+.env
+dist/
+build/
+.cache/
+coverage/
+.vscode/
+*.log
+npm-debug.log*
+
+# Next.js or Vite
+.next/
+out/
+.vite/
+
+# OS
+.DS_Store
+Thumbs.db

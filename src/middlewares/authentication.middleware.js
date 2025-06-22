@@ -21,6 +21,7 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
 
         const user = await User.findById(decodedAccessToken?._id).select("-password -refreshToken");
 
+        // Need to generate access token with the help of refresh token
         if (!user) throw new ApiError(401, "Unauthorized: User not found");
 
         req.user = user;
