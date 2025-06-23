@@ -30,4 +30,30 @@ const uploadOnCloudinay = async (localFilePath, folder = "") => {
     }
 }
 
-module.exports = { uploadOnCloudinay };
+
+const deleteFromCloudinary = async (imageUrl) => {
+    try {
+        if (!imageUrl) return;
+
+        // Cloudinary image URLs follow a structure like:
+        // https://res.cloudinary.com/<cloud_name>/image/upload/v<version>/<folder>/<public_id>.<ext>
+        // So we extract the public_id by removing domain, version, and extension
+
+        const parts = imageUrl.split("/");
+        const filenameWithExt = parts.pop();
+        const publicId = filenameWithExt.split(".")[0];
+
+        const folder = parts.slice(parts.indexOf("upload") + 1).join("/");
+        const fullPublicId = folder ? `${folder}/${publicId}` : publicId;
+
+        const result = await cloudinary.uploader.destroy(fullPublicId);
+        console.log("✅ Old image deleted:", result);
+        return result;
+    } catch (error) {
+        console.error("Error deleting image from Cloudinary:", error);
+        return null;
+    }
+};
+
+
+module.exports = { uploadOnCloudinay, deleteFromCloudinary };

@@ -1,5 +1,20 @@
 const express = require("express");
-const { registerUser, loginUser, logoutUser, refreshAccessToken, getUserProfile, forgotPassword, resetPassword } = require("../controllers/user.controllers");
+const {
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    getUserProfile,
+    forgotPassword,
+    resetPassword,
+    changeCurrentUserPassword,
+    getCurrentUser,
+    updateAccountDetails,
+    updateUserAvatar,
+    updateUserCoverImage,
+    getUserChannelProfile,
+    getWatchHistory
+} = require("../controllers/user.controllers");
 const { upload } = require("../middlewares/multer.middleware");
 const { verifyJWT } = require("../middlewares/authentication.middleware");
 const { loginLimiter, forgotPasswordLimiter } = require("../utils/rateLimiters");
@@ -26,6 +41,30 @@ router.route("/logout")
 
 router.route("/refresh-token")
     .post(refreshAccessToken)
+
+router.route("/change-password")
+    .post(changeCurrentUserPassword)
+
+router.route("/change-password")
+    .post(verifyJWT, changeCurrentUserPassword)
+
+router.route("/current-user")
+    .post(verifyJWT, getCurrentUser)
+
+router.route("/update-account")
+    .patch(verifyJWT, updateAccountDetails)
+
+router.route("/update-avatar")
+    .patch(verifyJWT, upload.single("avatar"), updateUserAvatar)
+
+router.route("/update-cover-image")
+    .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage)
+
+router.route("/channel/:username")
+    .get(verifyJWT, getUserChannelProfile)
+
+router.route("/watch-history")
+    .get(verifyJWT, getWatchHistory)
 
 router.route("/profile")
     .get(verifyJWT, getUserProfile); // *** Secured or Protected Routes *** ==> jane se pehle jwt verification se mil kar jana

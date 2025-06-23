@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { subscribe } = require("../routes/user.routes");
 
 const subscriptionSchema = new mongoose.Schema({
     subscriber: {
