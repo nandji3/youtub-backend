@@ -1,6 +1,14 @@
-import { Router } from 'express';
-import { verifyJWT } from '../middlewares/authentication.middleware';
-import { addVideoToPlaylist, createPlaylist, deletePlaylist, getPlaylistById, getUserPlaylists, removeVideoFromPlaylist, updatePlaylist } from '../controllers/playlist.controllers';
+const { Router } = require('express');
+const { verifyJWT } = require('../middlewares/authentication.middleware');
+const {
+    addVideoToPlaylist,
+    createPlaylist,
+    deletePlaylist,
+    getPlaylistById,
+    getUserPlaylists,
+    removeVideoFromPlaylist,
+    updatePlaylist
+} = require('../controllers/playlist.controllers');
 
 const router = Router();
 
@@ -22,4 +30,4 @@ router.route("/remove/:videoId/:playlistId")
 router.route("/user/:userId")
     .get(getUserPlaylists);
 
-export default router
+module.exports = router;

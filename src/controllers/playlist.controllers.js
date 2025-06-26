@@ -1,8 +1,9 @@
-import mongoose, { isValidObjectId } from "mongoose"
-import { Playlist } from "../models/playlist.model.js"
-import { ApiError } from "../utils/ApiError.js"
-import { ApiResponse } from "../utils/ApiResponse.js"
-import { asyncHandler } from "../utils/asyncHandler.js"
+const mongoose = require('mongoose');
+const { isValidObjectId } = mongoose;
+const { Playlist } = require('../models/playlist.mode;');
+const { ApiError } = require('../utils/ApiError');
+const { ApiResponse } = require('../utils/ApiResponse');
+const { asyncHandler } = require('../utils/asyncHandler');
 
 
 const createPlaylist = asyncHandler(async (req, res) => {
@@ -42,7 +43,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
     //TODO: update playlist
 })
 
-export {
+module.exports = {
     createPlaylist,
     getUserPlaylists,
     getPlaylistById,

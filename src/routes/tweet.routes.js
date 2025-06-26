@@ -1,7 +1,11 @@
-import { Router } from 'express';
-import { verifyJWT } from '../middlewares/authentication.middleware';
-import { createTweet, deleteTweet, getUserTweets, updateTweet } from '../controllers/tweet.controllers';
-
+const { Router } = require('express');
+const { verifyJWT } = require('../middlewares/authentication.middleware');
+const {
+    createTweet,
+    deleteTweet,
+    getUserTweets,
+    updateTweet
+} = require('../controllers/tweet.controllers');
 
 const router = Router();
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
@@ -14,4 +18,4 @@ router.route("/:tweetId")
     .patch(updateTweet)
     .delete(deleteTweet);
 
-export default router
+module.exports = router;

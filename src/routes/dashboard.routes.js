@@ -1,7 +1,9 @@
-import { Router } from 'express';
-import { verifyJWT } from '../middlewares/authentication.middleware';
-import { getChannelStats, getChannelVideos } from '../controllers/dashboard.controllers';
-
+const { Router } = require('express');
+const { verifyJWT } = require('../middlewares/authentication.middleware');
+const {
+    getChannelStats,
+    getChannelVideos
+} = require('../controllers/dashboard.controllers');
 
 const router = Router();
 
@@ -13,4 +15,4 @@ router.route("/stats")
 router.route("/videos")
     .get(getChannelVideos);
 
-export default router
+module.exports = router;

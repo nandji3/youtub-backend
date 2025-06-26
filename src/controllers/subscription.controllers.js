@@ -1,9 +1,11 @@
-import mongoose, { isValidObjectId } from "mongoose"
-import { User } from "../models/user.model.js"
-import { Subscription } from "../models/subscription.model.js"
-import { ApiError } from "../utils/ApiError.js"
-import { ApiResponse } from "../utils/ApiResponse.js"
-import { asyncHandler } from "../utils/asyncHandler.js"
+const mongoose = require('mongoose');
+const { isValidObjectId } = mongoose;
+const { User } = require('../models/user.model');
+const { Subscription } = require('../models/subscription.model');
+const { ApiError } = require('../utils/ApiError');
+const { ApiResponse } = require('../utils/ApiResponse');
+const { asyncHandler } = require('../utils/asyncHandler');
+
 
 
 const toggleSubscription = asyncHandler(async (req, res) => {
@@ -21,7 +23,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     const { subscriberId } = req.params
 })
 
-export {
+module.exports = {
     toggleSubscription,
     getUserChannelSubscribers,
     getSubscribedChannels

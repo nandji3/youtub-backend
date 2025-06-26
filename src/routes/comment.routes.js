@@ -1,6 +1,11 @@
-import { Router } from 'express';
-import { verifyJWT } from '../middlewares/authentication.middleware';
-import { addComment, deleteComment, getVideoComments, updateComment } from '../controllers/comment.controllers';
+const { Router } = require('express');
+const { verifyJWT } = require('../middlewares/authentication.middleware');
+const {
+    addComment,
+    deleteComment,
+    getVideoComments,
+    updateComment
+} = require('../controllers/comment.controllers');
 
 
 const router = Router();
@@ -15,4 +20,4 @@ router.route("/c/:commentId")
     .delete(deleteComment)
     .patch(updateComment);
 
-export default router
+module.exports = router;

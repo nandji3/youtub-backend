@@ -1,6 +1,14 @@
-import { Router } from 'express';
-import { verifyJWT } from '../middlewares/authentication.middleware';
-import { deleteVideo, getAllVideos, getVideoById, publishAVideo, togglePublishStatus } from '../controllers/video.controllers';
+const { Router } = require('express');
+const { verifyJWT } = require('../middlewares/authentication.middleware');
+const {
+    deleteVideo,
+    getAllVideos,
+    getVideoById,
+    publishAVideo,
+    togglePublishStatus,
+    updateVideo
+} = require('../controllers/video.controllers');
+const { upload } = require("../middlewares/multer.middleware");
 
 
 const router = Router();
@@ -21,4 +29,4 @@ router.route("/:videoId")
 router.route("/toggle/publish/:videoId")
     .patch(togglePublishStatus);
 
-export default router
+module.exports = router;

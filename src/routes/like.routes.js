@@ -1,6 +1,11 @@
-import { Router } from 'express';
-import { verifyJWT } from '../middlewares/authentication.middleware';
-import { getLikedVideos, toggleCommentLike, toggleTweetLike, toggleVideoLike } from '../controllers/like.controllers';
+const { Router } = require('express');
+const { verifyJWT } = require('../middlewares/authentication.middleware');
+const {
+    getLikedVideos,
+    toggleCommentLike,
+    toggleTweetLike,
+    toggleVideoLike
+} = require('../controllers/like.controllers');
 
 const router = Router();
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
@@ -17,4 +22,4 @@ router.route("/toggle/t/:tweetId")
 router.route("/videos")
     .get(getLikedVideos);
 
-export default router
+module.exports = router;

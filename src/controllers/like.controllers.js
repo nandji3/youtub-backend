@@ -1,8 +1,10 @@
-import mongoose, { isValidObjectId } from "mongoose"
-import { Like } from "../models/like.model.js"
-import { ApiError } from "../utils/ApiError.js"
-import { ApiResponse } from "../utils/ApiResponse.js"
-import { asyncHandler } from "../utils/asyncHandler.js"
+const mongoose = require('mongoose');
+const { isValidObjectId } = mongoose;
+const { Like } = require('../models/like.model');
+const { ApiError } = require('../utils/ApiError');
+const { ApiResponse } = require('../utils/ApiResponse');
+const { asyncHandler } = require('../utils/asyncHandler');
+
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
     const { videoId } = req.params
@@ -25,7 +27,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     //TODO: get all liked videos
 })
 
-export {
+module.exports = {
     toggleCommentLike,
     toggleTweetLike,
     toggleVideoLike,

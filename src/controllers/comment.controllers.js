@@ -1,8 +1,8 @@
-import mongoose from "mongoose"
-import { Comment } from "../models/comment.model.js"
-import { ApiError } from "../utils/ApiError.js"
-import { ApiResponse } from "../utils/ApiResponse.js"
-import { asyncHandler } from "../utils/asyncHandler.js"
+const mongoose = require('mongoose');
+const { Comment } = require('../models/comment.model');
+const { ApiError } = require('../utils/ApiError');
+const { ApiResponse } = require('../utils/ApiResponse');
+const { asyncHandler } = require('../utils/asyncHandler');
 
 const getVideoComments = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
@@ -23,7 +23,7 @@ const deleteComment = asyncHandler(async (req, res) => {
     // TODO: delete a comment
 })
 
-export {
+module.exports = {
     getVideoComments,
     addComment,
     updateComment,
